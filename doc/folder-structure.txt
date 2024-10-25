@@ -1,0 +1,104 @@
+src/
+├── @core/                        # Global cross-cutting concerns and NestJS-specific constructs
+│   ├── guards/
+│   │   └── auth.guard.ts         # Global Auth Guard (used across multiple contexts)
+│   ├── interceptors/
+│   │   └── logging.interceptor.ts  # Global logging interceptor (cross-cutting)
+│   ├── pipes/
+│   │   └── validation.pipe.ts      # Global validation pipe (cross-cutting)
+│   ├── filters/
+│   │   └── exception.filter.ts     # Global exception filter (cross-cutting)
+│   └── decorators/
+│       └── roles.decorator.ts      # Custom roles decorator for access control
+├── @shared/                      # Shared domain logic, value objects, and services
+│   ├── domain/
+│   │   ├── base.entity.ts         # Base class for entities (if needed)
+│   │   └── base.repository.ts     # Base repository interface (for shared patterns)
+│   ├── value-objects/
+│   │   ├── uuid.vo.ts             # UUID value object (example of a shared value object)
+│   │   └── date.vo.ts             # Date value object (if shared across modules)
+│   ├── services/
+│   │   └── email.service.ts       # Shared email service (used in multiple modules)
+│   └── events/
+│       └── domain-event.ts        # Base class for domain events (shared across contexts)
+├── config/                       # Global application configuration
+│   ├── prisma.config.ts           # Prisma configuration (DB connection details)
+│   └── env.config.ts              # Environment variables configuration
+├── modules/                      # Bounded contexts (modules) live here
+│   ├── user/                     # User bounded context
+│   │   ├── application/          # Application layer (use case orchestration)
+│   │   │   ├── commands/         # Command handlers (CQRS for write operations)
+│   │   │   │   └── create-user.command.ts
+│   │   │   ├── queries/          # Query handlers (CQRS for read operations)
+│   │   │   │   └── get-user.query.ts
+│   │   │   ├── services/         # Application services (orchestrate domain and infrastructure)
+│   │   │   │   └── user-app.service.ts
+│   │   │   └── dto/              # Data Transfer Objects (DTOs)
+│   │   │       └── create-user.dto.ts
+│   │   ├── domain/               # Core business logic and domain models
+│   │   │   ├── aggregates/       # Aggregate roots
+│   │   │   │   └── user.aggregate.ts   # User aggregate root
+│   │   │   ├── entities/         # Domain entities (inside aggregates)
+│   │   │   │   └── user.entity.ts
+│   │   │   ├── repositories/     # Domain repository interfaces (abstract)
+│   │   │   │   └── user.repository.ts
+│   │   │   ├── services/         # Domain services (business logic that spans multiple aggregates)
+│   │   │   │   └── user-domain.service.ts
+│   │   │   ├── events/           # Domain events
+│   │   │   │   └── user-created.event.ts
+│   │   │   └── value-objects/    # Domain-specific value objects
+│   │   │       ├── email.vo.ts
+│   │   │       └── password.vo.ts
+│   │   ├── infrastructure/       # Infrastructure layer (DB, external APIs, etc.)
+│   │   │   ├── orm/              # ORM-specific files for Prisma
+│   │   │   │   └── prisma-user.repository.ts   # Prisma implementation of User repository
+│   │   │   ├── mappers/          # ORM to domain mappers (Prisma models to entities)
+│   │   │   │   └── user.mapper.ts
+│   │   │   ├── graphql/          # GraphQL schema definitions (NOT resolvers)
+│   │   │   │   └── user.graphql.ts
+│   │   │   └── external/         # External services (e.g., 3rd party APIs)
+│   │   │       └── external-auth.service.ts
+│   │   └── presentation/         # Presentation layer (GraphQL resolvers, REST controllers)
+│   │       ├── graphql/          # GraphQL resolvers (expose use cases via resolvers)
+│   │       │   └── user.resolver.ts
+│   │       ├── rest/             # REST controllers (optional, depending on API strategy)
+│   │       │   └── user.controller.ts
+│   │       ├── guards/           # User-specific guards (e.g., RoleGuard)
+│   │       │   └── user-role.guard.ts
+│   │       ├── interceptors/     # User-specific interceptors (if any)
+│   │       └── pipes/            # User-specific pipes (if any)
+│   ├── auth/                     # Authentication/Authorization bounded context
+│   │   ├── application/
+│   │   │   └── services/
+│   │   │       └── auth-app.service.ts
+│   │   ├── domain/
+│   │   │   ├── entities/
+│   │   │   │   └── token.entity.ts
+│   │   │   ├── repositories/
+│   │   │   │   └── auth-token.repository.ts
+│   │   │   ├── services/
+│   │   │   │   └── auth-domain.service.ts
+│   │   │   └── value-objects/
+│   │   │       └── token.vo.ts
+│   │   ├── infrastructure/
+│   │   │   ├── orm/
+│   │   │   │   └── prisma-auth.repository.ts
+│   │   │   ├── mappers/
+│   │   │   └── graphql/
+│   │   └── presentation/
+│   │       ├── graphql/
+│   │       │   └── auth.resolver.ts
+│   │       ├── guards/
+│   │       │   └── jwt.guard.ts     # Auth-specific JWT Guard
+│   │       ├── interceptors/
+│   │       └── pipes/
+│   └── another-module/             # Placeholder for another bounded context (e.g., payment)
+│       ├── application/
+│       ├── domain/
+│       ├── infrastructure/
+│       └── presentation/
+├── prisma/                       # Prisma ORM-related files
+│   ├── migrations/               # Database migrations
+│   └── schema.prisma             # Prisma schema (DB model definitions)
+├── main.ts                       # Application entry point
+└── app.module.ts                 # Root module
