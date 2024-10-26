@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("TEST_DATABASE_URL")
 }
 
 enum ResourceType {
@@ -76,9 +76,8 @@ model Role {
   users       User[]
 
   created_by String?
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  deleted_at DateTime?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }
 
 model Permission {
@@ -126,9 +125,8 @@ model BlogPost {
 
   meta_fields MetaField? @relation(fields: [meta_field_id], references: [id])
 
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  deleted_at DateTime?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
   @@index([meta_field_id])
 }
@@ -156,9 +154,8 @@ model MetaField {
   product_categories ProductCategory[]
   blog_posts         BlogPost[]
 
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  deleted_at DateTime?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }
 
 model BlogPostCategory {
@@ -166,9 +163,8 @@ model BlogPostCategory {
 
   name String @unique
 
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  deleted_at DateTime?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }
 
 model Lang {

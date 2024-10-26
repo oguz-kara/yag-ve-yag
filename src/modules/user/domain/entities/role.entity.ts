@@ -1,9 +1,9 @@
 import { Permission } from './permission.entity'
 
 export class Role {
-  private readonly _id: string
+  private _id: string
   private _name: string
-  private _permissions: Permission[] // Role has a collection of Permissions
+  private _permissions?: Permission[] = []
   private _created_at: Date
   private _updated_at: Date
 
@@ -60,5 +60,9 @@ export class Role {
   public renameRole(newName: string): void {
     this._name = newName
     this._updated_at = new Date()
+  }
+
+  public assignId(id: string): void {
+    this._id = id
   }
 }

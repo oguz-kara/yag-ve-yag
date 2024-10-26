@@ -8,7 +8,7 @@ import { Role } from 'src/modules/user/domain/entities/role.entity'
 import { RoleMapper } from '../../mappers/role.mapper'
 import { PermissionPersistence } from '../persistence/permission.persistence'
 import { NameFinderRepository } from 'src/@core/interfaces/name-finder'
-import { Injectable } from '@nestjs/common'
+import { ConflictException, Injectable } from '@nestjs/common'
 
 @Injectable()
 export class RoleRepository
@@ -34,7 +34,7 @@ export class RoleRepository
   }
 
   async findByName(name: string): Promise<Role | null> {
-    const role = await this.db.role.findUnique({
+    const role = await this.db.role.findFirst({
       where: { name },
       select: { permissions: true, id: true, name: true },
     })
@@ -77,6 +77,20 @@ export class RoleRepository
     }
   }
 
+  async remove(id: string): Promise<Role | null> {
+    const role = await this.db.role.findFirst({
+      where: { id },
+    })
+
+    if (!role) return null
+
+    const removedRole = await this.db.role.delete({
+      where: { id },
+    })
+
+    return this.roleMapper.toDomain(removedRole)
+  }
+
   async save(role: Role): Promise<void> {
     const persistenceRole = this.roleMapper.toPersistence(role)
 
@@ -95,7 +109,7 @@ export class RoleRepository
         id: p.id,
       }))
 
-      await this.db.role.create({
+      const createdRole = await this.db.role.create({
         data: {
           name: persistenceRole.name,
           permissions: {
@@ -103,6 +117,11 @@ export class RoleRepository
           },
         },
       })
+
+      if (!createdRole.id)
+        throw new ConflictException('An error occurred when creating the role!')
+
+      role.assignId(createdRole.id)
     }
   }
 }

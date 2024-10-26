@@ -7,3 +7,14 @@ export class CreateRoleDto {
   @IsString()
   name: string
 }
+
+@InputType()
+export class RenameRoleDto {
+  @Field()
+  @IsString()
+  id: string
+
+  @Field()
+  @IsString()
+  name: string
+}

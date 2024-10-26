@@ -11,6 +11,20 @@ import { UserModule } from './modules/user/user.module'
       installSubscriptionHandlers: true,
       autoSchemaFile: true,
       driver: ApolloDriver,
+      formatError: (error) => {
+        const originalError = error.extensions?.originalError as Error
+
+        if (!originalError) {
+          return {
+            message: error.message,
+            code: error.extensions?.code,
+          }
+        }
+        return {
+          message: originalError.message,
+          code: error.extensions?.code,
+        }
+      },
     }),
     UserModule,
   ],

@@ -33,6 +33,14 @@ export class RoleService {
     return role
   }
 
+  async findByName(name: string): Promise<Role | null> {
+    const role = await this.roleRepository.findByName(name)
+
+    if (!role) throw new NotFoundException('Role not found!')
+
+    return role
+  }
+
   async findMany(
     params: PaginationParams,
   ): Promise<PaginatedItemsResponse<Role>> {
@@ -48,10 +56,25 @@ export class RoleService {
 
     if (!role) throw new NotFoundException('Role not found!')
 
+    const roleName = await this.roleRepository.findByName(name)
+
+    if (roleName)
+      throw new ConflictException('Role already exists! Try another name.')
+
     role.renameRole(name)
 
     await this.roleRepository.save(role)
 
     return role
+  }
+
+  async removeRoleById(id: string) {
+    const role = await this.roleRepository.findById(id)
+
+    if (!role) throw new ConflictException('Role not found!')
+
+    const removedRole = await this.roleRepository.remove(id)
+
+    return removedRole
   }
 }

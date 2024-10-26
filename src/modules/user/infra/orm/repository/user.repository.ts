@@ -54,6 +54,21 @@ export class UserRepository
     return this.userMapper.toDomain(user)
   }
 
+  async remove(id: string): Promise<User | null> {
+    const role = await this.db.user.findFirst({
+      where: { AND: [{ id }, { deleted_at: null }] },
+    })
+
+    if (!role) return null
+
+    const removedUser = await this.db.user.update({
+      where: { id },
+      data: { deleted_at: new Date() },
+    })
+
+    return this.userMapper.toDomain(removedUser)
+  }
+
   async save(user: User): Promise<void> {
     const persistenceUser = this.userMapper.toPersistence(user)
     if (user.id) {
